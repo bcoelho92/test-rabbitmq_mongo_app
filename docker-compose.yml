@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+    networks:
+      - app_network
+
+  worker:
+    build: ./worker
+    depends_on:
+      - rabbitmq
+      - mongodb
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - MONGO_URI=mongodb://mongodb:27017/testdb
+    networks:
+      - app_network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app_network
+
+  mongodb:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    networks:
+      - app_network
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
