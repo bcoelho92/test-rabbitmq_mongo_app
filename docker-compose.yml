@@ -33,6 +33,9 @@ services:
 
   mongodb:
     image: mongo:6
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
     networks:
@@ -43,7 +46,11 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
     depends_on:
       - mongodb
     networks:
